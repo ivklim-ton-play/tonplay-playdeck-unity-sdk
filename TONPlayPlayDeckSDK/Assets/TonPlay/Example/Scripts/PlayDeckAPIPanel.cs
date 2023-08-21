@@ -22,6 +22,7 @@ namespace TONPlay.Example {
         private PlayDeckAPI _playDeckAPI;
         private string _userJWTString;
         private UserJWT _userJWT;
+        private string _currentToken;
 
 
         public void GetScore() {
@@ -73,7 +74,7 @@ namespace TONPlay.Example {
             _userJWT = JsonUtility.FromJson<UserJWT>(_userJWTString);
 
             _playDeckAPI = new PlayDeckAPI();
-            _playDeckAPI.XAuthToken = _token;
+            _playDeckAPI.XAuthToken = _currentToken;
         }
 
         private void GetUserJWT() {
@@ -82,14 +83,14 @@ namespace TONPlay.Example {
             string uri = Application.absoluteURL;
             Dictionary<string, string> query = ParamParse.GetBrowserParameters(uri);
 
-            string token = query.ContainsKey(_queryToken) ? query[_queryToken] : _token;
-            _userJWTString = DecoderJWT.Decode(token);
+            _currentToken = query.ContainsKey(_queryToken) ? query[_queryToken] : _token;
+            _userJWTString = DecoderJWT.Decode(_currentToken);
         }
 
         private bool CheckAllRequiredData() {
             bool isValid = true;
 
-            if (string.IsNullOrEmpty(_token)) {
+            if (string.IsNullOrEmpty(_currentToken)) {
                 Debug.LogError("Please enter your token to _token");
                 isValid = false;
             }
